@@ -1,0 +1,18 @@
+# Unreal Engine generated folders
+Binaries/
+DerivedDataCache/
+Intermediate/
+Saved/
+.vs/
+
+# Build outputs
+Build/
+
+# IDE
+*.suo
+*.opensdf
+*.sln.docstates
+
+# OS
+Thumbs.db
+desktop.ini
