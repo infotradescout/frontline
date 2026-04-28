@@ -2,6 +2,13 @@
 
 Frontline is an FPS battle royale prototype where every match generates a new battlefield.
 
+## FUN in Minute 1 (placeholder — to be replaced)
+
+> Players adapt every match because every battlefield is unfamiliar.
+
+This is a working placeholder. It is not the final answer. Replace it once the
+prototype is in hand and we know what actually feels fun in the first 60 seconds.
+
 ## Core Rule
 
 Every feature must support the first playable loop:
