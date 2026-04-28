@@ -14,6 +14,7 @@ If a task does not directly improve the first playable loop, cut it.
 - Base building
 - Story mode and narrative systems
 - Companion apps, dashboards, web tooling
+- Graphics-first visual polish before low-end performance lock
 
 ## Scope Guard Questions
 

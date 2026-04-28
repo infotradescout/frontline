@@ -12,6 +12,14 @@ Every match is a new battlefield.
 - Asset sourcing: controlled use of Fab/Marketplace packs
 - Source control: GitHub + Git LFS (for large binary assets)
 
+## Technical Direction
+
+- Low-spec first, scale visuals later
+- Forward renderer first
+- No Lumen/Nanite in Prototype 0.1
+- Procedural match variation is the primary differentiator
+- Performance mode is default
+
 ## First Playable Target
 
 See FRONTLINE_GAME_LOCK.md and MVP_SCOPE.md.
@@ -36,6 +44,7 @@ Target is Frontline Prototype 0.1:
 - MVP_SCOPE.md
 - ROADMAP.md
 - CUT_LIST.md
+- Docs/LOW_SPEC_FIRST_STRATEGY.md
 
 ## Development Rule
 

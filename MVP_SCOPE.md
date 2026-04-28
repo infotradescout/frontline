@@ -15,6 +15,7 @@ Deliver one playable generated combat match.
 - Shrinking storm circle
 - Win/loss screen
 - New match creates a new layout
+- Performance mode as default configuration
 
 ## Non-Goals
 
@@ -30,3 +31,5 @@ Deliver one playable generated combat match.
 - Restarting creates a different playable layout using a seed
 - One complete match loop can finish in 5 minutes or less
 - Player can win or lose and cleanly return to restart flow
+- Performance mode runs at stable 60 FPS on weak hardware target
+- No major frame spikes during spawn, zone updates, or combat moments

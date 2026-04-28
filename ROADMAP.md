@@ -1,6 +1,6 @@
 # Solo-Dev Roadmap
 
-## Phase 1: Greybox
+## Phase 1: Low-End Core
 
 KPI: playable test arena.
 
@@ -9,7 +9,10 @@ Build:
 - Gun firing
 - Health/damage
 - Test enemy
-- Basic terrain blockout
+- Flat map test space
+- Forward rendering enabled
+- No Lumen or Nanite
+- Low scalability baseline
 
 ## Phase 2: Generated Match
 
@@ -22,7 +25,18 @@ Build:
 - Randomized spawns
 - Safe zone/storm
 
-## Phase 3: Combat Loop
+## Phase 3: Optimization Lock
+
+KPI: stable low-end runtime quality.
+
+Build:
+- Performance mode as default
+- Aggressive culling and instancing
+- Cheap AI and minimal physics
+- Stable 60 FPS on weak hardware target
+- Remove major frame spikes
+
+## Phase 4: Combat Loop
 
 KPI: 5-minute match is playable.
 
@@ -33,7 +47,7 @@ Build:
 - Damage zone
 - Win/loss screen
 
-## Phase 4: Visual Identity
+## Phase 5: Visual Identity and High-Quality Mode
 
 KPI: screenshots look like a real game.
 
@@ -43,8 +57,9 @@ Build:
 - Weapon polish
 - Sound
 - Lighting
+- Optional high-quality mode toggles
 
-## Phase 5: Multiplayer Test
+## Phase 6: Multiplayer Test
 
 KPI: 2-4 players can join a generated match.
 

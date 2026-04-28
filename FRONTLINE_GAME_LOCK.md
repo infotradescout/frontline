@@ -7,6 +7,22 @@ Frontline is an FPS battle royale prototype where every match generates a new ba
 Every feature must support the first playable loop:
 generate map, spawn player, loot, fight, survive zone, win.
 
+## Performance Rule
+
+Build for low-end hardware first, then scale visuals up later.
+
+Initial rendering and content constraints:
+
+- Forward rendering path
+- No Lumen in Prototype 0.1
+- No Nanite in Prototype 0.1
+- Low-poly modular environment pieces
+- Simple lighting and shadow setup
+
+Primary target:
+
+- Stable 60 FPS on weak hardware (GTX 1050 / integrated graphics class) in performance mode
+
 ## First Playable Scope
 
 - FPS controller
@@ -33,3 +49,4 @@ generate map, spawn player, loot, fight, survive zone, win.
 - Marketplace
 - Web dashboard
 - External backend
+- Graphics-first development with optimization later
