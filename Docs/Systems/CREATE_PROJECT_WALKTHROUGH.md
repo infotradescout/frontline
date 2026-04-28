@@ -50,6 +50,12 @@ This screen has 5 settings. **Set them EXACTLY as listed below. This matters.**
 | **Starter Content**    | **OFF (unchecked)**       | We don't want Epic's filler assets             |
 | **Raytracing**         | **OFF (unchecked)**       | Forbidden in Prototype 0.1                     |
 
+If Unreal does **not** let you uncheck Starter Content (some template/version combinations lock it):
+
+- Keep going. Create the project anyway.
+- We'll remove Starter Content right after setup with one command.
+- This is normal and does **not** break the plan.
+
 ---
 
 ## Step 4 — Project Location & Name
@@ -101,6 +107,16 @@ You'll see a "Save?" prompt. Click **Don't Save**.
 
 5. If you see a green **"✅ Setup complete"** message, you're done.
 6. If you see a red **"❌"** message, copy the error and tell me — I'll fix it.
+
+### If Starter Content was forced ON
+
+Run this extra command in the same PowerShell window:
+
+```powershell
+.\Tools\remove_starter_content.ps1
+```
+
+If you see **"✅ StarterContent removed"**, you are clean.
 
 ---
 
