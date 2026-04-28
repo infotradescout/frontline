@@ -50,6 +50,7 @@ Target is Frontline Prototype 0.1:
 ## Execution Guides
 
 - Day 1 setup sequence: Docs/DAY1_EXACT_SETUP.md
+- Full solo-dev pipeline: Docs/FULL_PIPELINE_SOLO_DEV_TO_STORE_RELEASE.md
 
 ## Development Rule
 
