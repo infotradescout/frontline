@@ -45,6 +45,11 @@ Target is Frontline Prototype 0.1:
 - ROADMAP.md
 - CUT_LIST.md
 - Docs/LOW_SPEC_FIRST_STRATEGY.md
+- Docs/DAY1_EXACT_SETUP.md
+
+## Execution Guides
+
+- Day 1 setup sequence: Docs/DAY1_EXACT_SETUP.md
 
 ## Development Rule
 
