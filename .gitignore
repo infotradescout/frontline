@@ -1,21 +1,45 @@
-# Unreal Engine generated folders
+# ============================================================================
+# Frontline — .gitignore
+# Unreal Engine + Windows + IDE artifacts
+# ============================================================================
+
+# --- Unreal generated folders ---
 Binaries/
 DerivedDataCache/
 Intermediate/
 Saved/
-.vs/
-
-# Build outputs
 Build/
+.vs/
+.vscode/
 
-# IDE
+# --- Unreal generated project files ---
+*.sln
 *.suo
 *.opensdf
+*.sdf
+*.VC.db
+*.VC.opendb
 *.sln.docstates
 
-# OS
+# --- Unreal generated code project files (regenerated from .uproject) ---
+*.xcodeproj
+*.xcworkspace
+
+# --- Build outputs (top-level) ---
+Builds/Output/
+Builds/Cooked/
+Builds/Staged/
+Builds/Archive/
+
+# --- OS junk ---
 Thumbs.db
 desktop.ini
+.DS_Store
 
-# Optional local artifacts
+# --- Temporary / local ---
 *.tmp
+*.log
+*.bak
+
+# --- Keep .gitkeep markers in otherwise-empty tracked folders ---
+!**/.gitkeep
