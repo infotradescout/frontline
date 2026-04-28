@@ -5,11 +5,14 @@
 # Safe to run multiple times.
 # ============================================================================
 
+param(
+    [string]$ProjectName = ''
+)
+
 $ErrorActionPreference = 'Stop'
 
 $repoRoot    = Split-Path -Parent $PSScriptRoot
-$projectRoot = Join-Path $repoRoot 'UnrealProject\Frontline'
-$starterPath = Join-Path $projectRoot 'Content\StarterContent'
+$unrealRoot  = Join-Path $repoRoot 'UnrealProject'
 
 Write-Host ''
 Write-Host '================================================================' -ForegroundColor Cyan
@@ -17,12 +20,37 @@ Write-Host ' Frontline — Starter Content Cleanup' -ForegroundColor Cyan
 Write-Host '================================================================' -ForegroundColor Cyan
 Write-Host ''
 
-if (-not (Test-Path $projectRoot)) {
-    Write-Host '❌ Unreal project folder not found:' -ForegroundColor Red
-    Write-Host "   $projectRoot" -ForegroundColor Red
-    Write-Host 'Create the project first, then run this script.' -ForegroundColor Red
+if (-not (Test-Path $unrealRoot)) {
+    Write-Host '❌ UnrealProject folder not found:' -ForegroundColor Red
+    Write-Host "   $unrealRoot" -ForegroundColor Red
+    Write-Host 'Create your Unreal project in this repo first.' -ForegroundColor Red
     exit 1
 }
+
+$projectRoot = $null
+if (-not [string]::IsNullOrWhiteSpace($ProjectName)) {
+    $candidate = Join-Path $unrealRoot $ProjectName
+    if (Test-Path $candidate) { $projectRoot = $candidate }
+}
+
+if (-not $projectRoot) {
+    $uprojects = Get-ChildItem -Path $unrealRoot -Recurse -Filter *.uproject -File
+    if ($uprojects.Count -eq 1) {
+        $projectRoot = Split-Path -Parent $uprojects[0].FullName
+    } elseif ($uprojects.Count -gt 1) {
+        Write-Host '❌ Multiple projects found. Run with -ProjectName.' -ForegroundColor Red
+        $uprojects | ForEach-Object { Write-Host "   $($_.FullName)" -ForegroundColor Red }
+        exit 1
+    }
+}
+
+if (-not $projectRoot) {
+    Write-Host '❌ No Unreal project found under UnrealProject\' -ForegroundColor Red
+    Write-Host 'Create/open your project once, then re-run this script.' -ForegroundColor Red
+    exit 1
+}
+
+$starterPath = Join-Path $projectRoot 'Content\StarterContent'
 
 if (-not (Test-Path $starterPath)) {
     Write-Host '✅ StarterContent folder is already absent. Nothing to remove.' -ForegroundColor Green

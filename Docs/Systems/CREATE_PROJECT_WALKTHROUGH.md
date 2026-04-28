@@ -96,7 +96,7 @@ You'll see a "Save?" prompt. Click **Don't Save**.
 3. Type this and press Enter:
 
    ```powershell
-   .\Tools\setup_unreal_project.ps1
+   .\Tools\setup_unreal_project.ps1 -ProjectName FrontlineWarfare
    ```
 
 4. The script will:
@@ -113,7 +113,7 @@ You'll see a "Save?" prompt. Click **Don't Save**.
 Run this extra command in the same PowerShell window:
 
 ```powershell
-.\Tools\remove_starter_content.ps1
+.\Tools\remove_starter_content.ps1 -ProjectName FrontlineWarfare
 ```
 
 If you see **"✅ StarterContent removed"**, you are clean.

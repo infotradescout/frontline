@@ -13,13 +13,15 @@
 # Safe to run multiple times.
 # ============================================================================
 
+param(
+    [string]$ProjectName = ''
+)
+
 $ErrorActionPreference = 'Stop'
 
 # Resolve paths relative to repo root (script lives in Tools/)
 $repoRoot     = Split-Path -Parent $PSScriptRoot
-$projectDir   = Join-Path $repoRoot 'UnrealProject\Frontline'
-$uprojectPath = Join-Path $projectDir 'Frontline.uproject'
-$configDir    = Join-Path $projectDir 'Config'
+$unrealRoot   = Join-Path $repoRoot 'UnrealProject'
 $srcConfig    = Join-Path $PSScriptRoot 'UnrealConfig'
 
 Write-Host ''
@@ -29,17 +31,56 @@ Write-Host '================================================================' -F
 Write-Host ''
 
 # --- Step 1: Verify .uproject exists ---
-Write-Host '[1/4] Looking for Frontline.uproject ...' -ForegroundColor Yellow
-if (-not (Test-Path $uprojectPath)) {
+Write-Host '[1/4] Looking for .uproject ...' -ForegroundColor Yellow
+if (-not (Test-Path $unrealRoot)) {
     Write-Host ''
-    Write-Host '❌ Frontline.uproject NOT FOUND at:' -ForegroundColor Red
-    Write-Host "    $uprojectPath" -ForegroundColor Red
+    Write-Host '❌ UnrealProject folder NOT FOUND at:' -ForegroundColor Red
+    Write-Host "    $unrealRoot" -ForegroundColor Red
     Write-Host ''
-    Write-Host 'Did you create the Unreal project yet?' -ForegroundColor Red
-    Write-Host 'Follow Docs/Systems/CREATE_PROJECT_WALKTHROUGH.md first.' -ForegroundColor Red
+    Write-Host 'Create your Unreal project inside this repo first.' -ForegroundColor Red
     Write-Host ''
     exit 1
 }
+
+$uprojectPath = $null
+if (-not [string]::IsNullOrWhiteSpace($ProjectName)) {
+    $candidate = Join-Path (Join-Path $unrealRoot $ProjectName) ("$ProjectName.uproject")
+    if (Test-Path $candidate) {
+        $uprojectPath = $candidate
+    }
+}
+
+if (-not $uprojectPath) {
+    $uprojects = Get-ChildItem -Path $unrealRoot -Recurse -Filter *.uproject -File
+    if ($uprojects.Count -eq 1) {
+        $uprojectPath = $uprojects[0].FullName
+    } elseif ($uprojects.Count -gt 1) {
+        Write-Host ''
+        Write-Host '❌ Multiple .uproject files found. Run with -ProjectName.' -ForegroundColor Red
+        $uprojects | ForEach-Object { Write-Host "    $($_.FullName)" -ForegroundColor Red }
+        Write-Host ''
+        Write-Host 'Example:' -ForegroundColor Yellow
+        Write-Host '  .\Tools\setup_unreal_project.ps1 -ProjectName FrontlineWarfare' -ForegroundColor Yellow
+        Write-Host ''
+        exit 1
+    }
+}
+
+if (-not $uprojectPath) {
+    Write-Host ''
+    Write-Host '❌ No .uproject found under:' -ForegroundColor Red
+    Write-Host "    $unrealRoot" -ForegroundColor Red
+    Write-Host ''
+    Write-Host 'If you already created it, it may be outside this repo.' -ForegroundColor Red
+    Write-Host 'Move/copy your project folder into UnrealProject\ then run this again.' -ForegroundColor Red
+    Write-Host 'Or run with -ProjectName if it exists here with a different name.' -ForegroundColor Red
+    Write-Host ''
+    exit 1
+}
+
+$projectDir   = Split-Path -Parent $uprojectPath
+$projectBase  = [System.IO.Path]::GetFileNameWithoutExtension($uprojectPath)
+$configDir    = Join-Path $projectDir 'Config'
 Write-Host "      ✅ Found: $uprojectPath" -ForegroundColor Green
 
 # --- Step 2: Ensure Config/ exists ---
@@ -109,7 +150,7 @@ Write-Host ' ✅ Setup complete' -ForegroundColor Green
 Write-Host '================================================================' -ForegroundColor Cyan
 Write-Host ''
 Write-Host 'Next steps:' -ForegroundColor White
-Write-Host '  1. Double-click UnrealProject\Frontline\Frontline.uproject' -ForegroundColor White
+Write-Host "  1. Double-click UnrealProject\$projectBase\$projectBase.uproject" -ForegroundColor White
 Write-Host '  2. Wait for shaders to recompile (one-time, ~3-10 min)' -ForegroundColor White
 Write-Host '  3. Hit Play (green arrow). WASD + mouse + left-click should work.' -ForegroundColor White
 Write-Host '  4. Tell Copilot "it works" — I will commit and push for you.' -ForegroundColor White
