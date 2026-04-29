@@ -48,6 +48,18 @@ def _is_bot_spawner(actor):
     )
 
 
+def _is_spawn_actor(actor):
+    cls_name = actor.get_class().get_name().lower()
+    actor_name = actor.get_name().lower()
+    if "playerstart" in cls_name:
+        return True
+    if "targetpoint" in cls_name:
+        return True
+    if "spawn" in cls_name or "spawn" in actor_name:
+        return True
+    return False
+
+
 def verify():
     gm_path, gm_bp = load_first(CANDIDATE_GAMEMODES)
     if gm_bp and gm_bp.generated_class():
@@ -73,8 +85,18 @@ def verify():
 
     actors = unreal.EditorLevelLibrary.get_all_level_actors()
     spawners = [a for a in actors if _is_bot_spawner(a)]
+    spawn_actors = [a for a in actors if _is_spawn_actor(a)]
+    elevated_spawns = [a for a in spawn_actors if a.get_actor_location().z > 100.0]
     nav_bounds = [a for a in actors if a.get_class().get_name() == "NavMeshBoundsVolume"]
     unreal.log_warning(f"BR_VERIFY_SPAWNERS {len(spawners)}")
+    unreal.log_warning(f"BR_VERIFY_SPAWN_ACTORS {len(spawn_actors)}")
+    unreal.log_warning(f"BR_VERIFY_ELEVATED_SPAWNS {len(elevated_spawns)}")
+    for actor in elevated_spawns:
+        loc = actor.get_actor_location()
+        unreal.log_warning(
+            f"BR_VERIFY_ELEVATED {actor.get_name()} CLASS={actor.get_class().get_name()} "
+            f"LOC=({loc.x:.1f},{loc.y:.1f},{loc.z:.1f})"
+        )
     if len(spawners) == 0:
         unreal.log_warning(
             "BR_VERIFY_RUNTIME_BOTS_MODE No editor spawner actors found; "
