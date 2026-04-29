@@ -16,11 +16,11 @@ $pattern = '(?ms)^\[/Script/EngineSettings\.GameMapsSettings\][\s\S]*?(?=^\[|\z)
 $clean = [regex]::Replace($raw, $pattern, '')
 $block = @"
 [/Script/EngineSettings.GameMapsSettings]
-EditorStartupMap=/Game/Variant_Shooter/Lvl_ArenaShooter
-GameDefaultMap=/Game/Variant_Shooter/Lvl_ArenaShooter
-ServerDefaultMap=/Game/Variant_Shooter/Lvl_ArenaShooter
-GlobalDefaultGameMode=/Game/Variant_Shooter/Blueprints/BP_ShooterGameMode.BP_ShooterGameMode_C
-GlobalDefaultServerGameMode=/Game/Variant_Shooter/Blueprints/BP_ShooterGameMode.BP_ShooterGameMode_C
+EditorStartupMap=/Game/FirstPerson/Lvl_FirstPerson
+GameDefaultMap=/Game/FirstPerson/Lvl_FirstPerson
+ServerDefaultMap=/Game/FirstPerson/Lvl_FirstPerson
+GlobalDefaultGameMode=/Game/FirstPerson/Blueprints/BP_FirstPersonGameMode.BP_FirstPersonGameMode_C
+GlobalDefaultServerGameMode=/Game/FirstPerson/Blueprints/BP_FirstPersonGameMode.BP_FirstPersonGameMode_C
 "@
 Set-Content $cfg (($clean.TrimEnd()+"`r`n`r`n"+$block+"`r`n")) -Encoding UTF8
 

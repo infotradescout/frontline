@@ -1,7 +1,17 @@
 import unreal
 
-GM_PATH = '/Game/Variant_Shooter/Blueprints/BP_ShooterGameMode'
-UI_PATH = '/Game/Variant_Shooter/UI/UI_Shooter'
+GM_PATHS = [
+    '/Game/Variant_Shooter/Blueprints/BP_ShooterGameMode',
+    '/Game/Variant_Shooter_BP/Blueprints/BP_ShooterGameMode',
+    '/Game/Variant_Shooter_Std/Blueprints/BP_ShooterGameMode',
+    '/Game/FirstPerson/Blueprints/BP_FirstPersonGameMode',
+    '/Game/FirstPerson/FirstPerson/Blueprints/BP_FirstPersonGameMode',
+]
+
+UI_PATHS = [
+    '/Game/Variant_Shooter/UI/UI_Shooter',
+    '/Game/Variant_Shooter_Std/UI/UI_Shooter',
+]
 
 
 def load(path: str):
@@ -10,8 +20,18 @@ def load(path: str):
     return obj
 
 
-gm_bp = load(GM_PATH)
-ui = load(UI_PATH)
+def load_first(paths: list[str]):
+    for path in paths:
+        obj = load(path)
+        if obj is not None:
+            return path, obj
+    return None, None
+
+
+gm_path, gm_bp = load_first(GM_PATHS)
+ui_path, ui = load_first(UI_PATHS)
+unreal.log_warning(f'HUD_CHECK ACTIVE_GM_PATH={gm_path}')
+unreal.log_warning(f'HUD_CHECK ACTIVE_UI_PATH={ui_path}')
 
 if not gm_bp:
     raise SystemExit(1)
