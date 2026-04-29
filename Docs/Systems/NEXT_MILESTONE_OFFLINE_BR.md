@@ -33,6 +33,11 @@ What it does:
 - ensures NavMesh bounds exists and covers the arena
 - runs verification and prints key `BR_APPLY_*` and `BR_VERIFY_*` log lines
 
+Note:
+
+- `BR_VERIFY_SPAWNERS 0` is acceptable when bots are spawned at runtime by
+  blueprint logic rather than editor-placed spawner actors.
+
 ## Acceptance Criteria
 
 - Press Play and enter Warmup or Live state.

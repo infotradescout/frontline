@@ -124,6 +124,11 @@ def tune_map_and_spawners():
     actors = unreal.EditorLevelLibrary.get_all_level_actors()
     spawners = [a for a in actors if _is_bot_spawner(a)]
     unreal.log_warning(f"BR_APPLY_SPAWNER_COUNT {len(spawners)}")
+    if len(spawners) == 0:
+        unreal.log_warning(
+            "BR_APPLY_RUNTIME_BOTS_MODE No editor spawner actors found; "
+            "assuming bots are created by runtime blueprint logic."
+        )
 
     for i, spawner in enumerate(spawners[: len(SPAWNER_POINTS)]):
         point = SPAWNER_POINTS[i]

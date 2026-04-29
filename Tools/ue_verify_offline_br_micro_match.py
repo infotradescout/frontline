@@ -73,6 +73,11 @@ def verify():
     spawners = [a for a in actors if _is_bot_spawner(a)]
     nav_bounds = [a for a in actors if a.get_class().get_name() == "NavMeshBoundsVolume"]
     unreal.log_warning(f"BR_VERIFY_SPAWNERS {len(spawners)}")
+    if len(spawners) == 0:
+        unreal.log_warning(
+            "BR_VERIFY_RUNTIME_BOTS_MODE No editor spawner actors found; "
+            "runtime bot spawn pipeline is likely blueprint-driven."
+        )
     unreal.log_warning(f"BR_VERIFY_NAV_BOUNDS {len(nav_bounds)}")
     unreal.log_warning("BR_VERIFY_COMPLETE")
 
