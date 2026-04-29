@@ -24,6 +24,12 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Match")
     float RestartDelaySeconds;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Match")
+    bool bAnnounceWinnerOnScreen;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Match")
+    float WinnerAnnouncementSeconds;
+
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bots")
     int32 TargetBotCount;
 

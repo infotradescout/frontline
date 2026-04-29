@@ -1,6 +1,7 @@
 #include "FrontlineBRGameMode.h"
 
 #include "AIController.h"
+#include "Engine/Engine.h"
 #include "EngineUtils.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
@@ -15,9 +16,11 @@ AFrontlineBRGameMode::AFrontlineBRGameMode()
     GameStateClass = AFrontlineBRGameState::StaticClass();
 
     WarmupSeconds = 10.0f;
-    LiveMatchSeconds = 300.0f;
-    RestartDelaySeconds = 8.0f;
-    TargetBotCount = 8;
+    LiveMatchSeconds = 240.0f;
+    RestartDelaySeconds = 10.0f;
+    bAnnounceWinnerOnScreen = true;
+    WinnerAnnouncementSeconds = 8.0f;
+    TargetBotCount = 10;
     BotSpawnRadius = 1500.0f;
     bSpawnBotsAtBeginPlay = true;
     ServerPhaseTimeRemaining = 0.0f;
@@ -203,6 +206,31 @@ void AFrontlineBRGameMode::EndMatchWithWinner(APawn* WinnerPawn, const FString& 
     if (BRGameState->WinnerLabel.IsEmpty())
     {
         BRGameState->WinnerLabel = FString::Printf(TEXT("No Winner (%s)"), *Reason);
+    }
+
+    if (bAnnounceWinnerOnScreen)
+    {
+        const FString Announcement = FString::Printf(TEXT("Match Ended: %s"), *BRGameState->WinnerLabel);
+        for (FConstPlayerControllerIterator It = GetWorld()->GetPlayerControllerIterator(); It; ++It)
+        {
+            if (APlayerController* PC = It->Get())
+            {
+                PC->ClientMessage(Announcement);
+            }
+        }
+
+        if (GEngine)
+        {
+            GEngine->AddOnScreenDebugMessage(
+                -1,
+                WinnerAnnouncementSeconds,
+                FColor::Yellow,
+                Announcement,
+                true,
+                FVector2D(1.4f, 1.4f));
+        }
+
+        UE_LOG(LogTemp, Log, TEXT("FrontlineBRGameMode: %s"), *Announcement);
     }
 
     EnterPhase(EFrontlineMatchPhase::Ended);
