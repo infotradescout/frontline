@@ -66,7 +66,7 @@ Set scalability:
 
 Goal:
 
-- A playable shooter, not a battle royale
+- A playable shooter foundation, not live battle royale yet
 
 Build only:
 
@@ -220,10 +220,10 @@ Start with:
 - 2-player test
 - Unreal replication
 - Listen server
+- Dedicated server smoke test after listen-server gameplay works
 
 Do not build yet:
 
-- Dedicated servers
 - Cloud backend
 - Anti-cheat
 - Matchmaking

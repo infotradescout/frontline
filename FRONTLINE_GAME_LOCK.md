@@ -40,9 +40,24 @@ Primary target:
 - Shrinking danger zone
 - Win/loss condition
 
+## Long-Term Multiplayer Target
+
+The long-term target is battle royale matches with up to 100 live players plus
+bots. This target is built in scaling rings:
+
+- offline bot match
+- 2-4 live players
+- 8-16 live players plus bots
+- 24-40 live players plus bots
+- 60-100 live players plus bots
+
+The project may prepare architecture for this from day one, but full live
+multiplayer work starts only after Prototype 0.1 proves the complete solo match
+loop.
+
 ## Forbidden Until Prototype 0.1
 
-- Full multiplayer
+- Full live multiplayer implementation
 - Ranked mode
 - Battle pass
 - Cosmetics
