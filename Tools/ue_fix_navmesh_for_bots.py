@@ -1,10 +1,26 @@
 import unreal
 
-MAP_PATH = '/Game/Variant_Shooter/Lvl_ArenaShooter'
+MAP_CANDIDATES = [
+    '/Game/FirstPerson/Lvl_FirstPerson',
+    '/Game/FirstPerson/FirstPerson/Lvl_FirstPerson',
+    '/Game/Variant_Shooter/Lvl_ArenaShooter',
+    '/Game/Variant_Shooter_BP/Lvl_Shooter',
+    '/Game/Variant_Shooter_Std/Lvl_Shooter',
+]
 
-world = unreal.EditorLoadingAndSavingUtils.load_map(MAP_PATH)
+
+def _load_first_map(paths):
+    for path in paths:
+        if unreal.EditorAssetLibrary.does_asset_exist(path):
+            world = unreal.EditorLoadingAndSavingUtils.load_map(path)
+            if world:
+                unreal.log_warning(f'NAV_FIX_MAP {path}')
+                return path, world
+    return None, None
+
+map_path, world = _load_first_map(MAP_CANDIDATES)
 if not world:
-    unreal.log_error(f'FAILED_TO_LOAD_MAP {MAP_PATH}')
+    unreal.log_error('FAILED_TO_LOAD_MAP_CANDIDATES')
     raise SystemExit(1)
 
 actors = unreal.EditorLevelLibrary.get_all_level_actors()
@@ -23,8 +39,9 @@ if not nav_bounds:
     unreal.log_warning(f'CREATED_NAV_BOUNDS={nb.get_name()}')
 
 for i, nb in enumerate(nav_bounds):
-    nb.set_actor_location(unreal.Vector(0.0, 0.0, 250.0), False, False)
-    nb.set_actor_scale3d(unreal.Vector(50.0, 50.0, 10.0))
+    nb.set_actor_location(unreal.Vector(0.0, 0.0, 100.0), False, False)
+    # Expand bounds to cover platform and lower arena lanes.
+    nb.set_actor_scale3d(unreal.Vector(70.0, 70.0, 20.0))
     try:
         nb.set_actor_label(f'NAV_BOUNDS_{i+1:02d}', mark_dirty=True)
     except Exception:
@@ -38,10 +55,16 @@ try:
 except Exception:
     pass
 
+try:
+    unreal.EditorBuildLibrary.build_paths()
+    unreal.log_warning('NAV_PATH_BUILD_TRIGGERED')
+except Exception as ex:
+    unreal.log_warning(f'NAV_PATH_BUILD_SKIP {ex}')
+
 # Save map asset.
 saved = False
 try:
-    saved = unreal.EditorAssetLibrary.save_asset(MAP_PATH, False)
+    saved = unreal.EditorAssetLibrary.save_asset(map_path, False)
 except Exception as ex:
     unreal.log_warning(f'SAVE_MAP_EXCEPTION {ex}')
 

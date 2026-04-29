@@ -29,6 +29,8 @@ CHECK_PROPS = [
 
 def load_first(paths: list[str]):
     for path in paths:
+        if not unreal.EditorAssetLibrary.does_asset_exist(path):
+            continue
         asset = unreal.EditorAssetLibrary.load_asset(path)
         if asset is not None:
             unreal.log_warning(f"BR_VERIFY_FOUND {path}")
