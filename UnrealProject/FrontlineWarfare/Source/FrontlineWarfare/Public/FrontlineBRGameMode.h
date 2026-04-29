@@ -14,6 +14,7 @@ public:
     AFrontlineBRGameMode();
 
     virtual void BeginPlay() override;
+    virtual void PostLogin(APlayerController* NewPlayer) override;
 
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Match")
     float WarmupSeconds;

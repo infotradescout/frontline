@@ -39,17 +39,76 @@ void AFrontlineBRGameMode::BeginPlay()
 {
     Super::BeginPlay();
 
+    UWorld* World = GetWorld();
+    const FString WorldPackageName = (World && World->GetOutermost())
+        ? World->GetOutermost()->GetName()
+        : TEXT("<None>");
+
+    // Guard against the known bad nested map path that can launch the wrong experience.
+    if (WorldPackageName.Contains(TEXT("/Game/FirstPerson/FirstPerson/Lvl_FirstPerson")))
+    {
+        UE_LOG(
+            LogTemp,
+            Error,
+            TEXT("FrontlineBRGameMode: Wrong map package loaded (%s). Redirecting to /Game/FirstPerson/Lvl_FirstPerson"),
+            *WorldPackageName);
+
+        UGameplayStatics::OpenLevel(this, FName(TEXT("/Game/FirstPerson/Lvl_FirstPerson")), true);
+        return;
+    }
+
     UE_LOG(
         LogTemp,
         Log,
-        TEXT("FrontlineBRGameMode: BeginPlay Map=%s DefaultPawnClass=%s"),
+        TEXT("FrontlineBRGameMode: BeginPlay Map=%s Package=%s DefaultPawnClass=%s"),
         *UGameplayStatics::GetCurrentLevelName(this, true),
+        *WorldPackageName,
         *GetNameSafe(DefaultPawnClass));
 
     SpawnInitialBots();
 
     EnterPhase(EFrontlineMatchPhase::Warmup);
     GetWorldTimerManager().SetTimer(TickMatchTimerHandle, this, &AFrontlineBRGameMode::TickMatchPhase, 1.0f, true);
+}
+
+void AFrontlineBRGameMode::PostLogin(APlayerController* NewPlayer)
+{
+    Super::PostLogin(NewPlayer);
+
+    if (!IsValid(NewPlayer))
+    {
+        return;
+    }
+
+    APawn* Pawn = NewPlayer->GetPawn();
+    UE_LOG(
+        LogTemp,
+        Log,
+        TEXT("FrontlineBRGameMode: PostLogin Controller=%s Pawn=%s PawnClass=%s"),
+        *GetNameSafe(NewPlayer),
+        *GetNameSafe(Pawn),
+        Pawn ? *GetNameSafe(Pawn->GetClass()) : TEXT("None"));
+
+    if (!Pawn)
+    {
+        TWeakObjectPtr<APlayerController> WeakPC(NewPlayer);
+        GetWorldTimerManager().SetTimerForNextTick([this, WeakPC]()
+        {
+            if (!WeakPC.IsValid())
+            {
+                return;
+            }
+
+            APawn* LatePawn = WeakPC->GetPawn();
+            UE_LOG(
+                LogTemp,
+                Log,
+                TEXT("FrontlineBRGameMode: PostLoginNextTick Controller=%s Pawn=%s PawnClass=%s"),
+                *GetNameSafe(WeakPC.Get()),
+                *GetNameSafe(LatePawn),
+                LatePawn ? *GetNameSafe(LatePawn->GetClass()) : TEXT("None"));
+        });
+    }
 }
 
 void AFrontlineBRGameMode::SpawnInitialBots()
