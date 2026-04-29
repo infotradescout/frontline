@@ -39,6 +39,13 @@ void AFrontlineBRGameMode::BeginPlay()
 {
     Super::BeginPlay();
 
+    UE_LOG(
+        LogTemp,
+        Log,
+        TEXT("FrontlineBRGameMode: BeginPlay Map=%s DefaultPawnClass=%s"),
+        *UGameplayStatics::GetCurrentLevelName(this, true),
+        *GetNameSafe(DefaultPawnClass));
+
     SpawnInitialBots();
 
     EnterPhase(EFrontlineMatchPhase::Warmup);
