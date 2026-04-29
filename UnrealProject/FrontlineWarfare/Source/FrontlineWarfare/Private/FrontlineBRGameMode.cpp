@@ -5,7 +5,9 @@
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/PlayerState.h"
+#include "GameFramework/PlayerStart.h"
 #include "Kismet/GameplayStatics.h"
+#include "NavigationSystem.h"
 #include "TimerManager.h"
 
 AFrontlineBRGameMode::AFrontlineBRGameMode()
@@ -15,6 +17,9 @@ AFrontlineBRGameMode::AFrontlineBRGameMode()
     WarmupSeconds = 10.0f;
     LiveMatchSeconds = 300.0f;
     RestartDelaySeconds = 8.0f;
+    TargetBotCount = 8;
+    BotSpawnRadius = 1500.0f;
+    bSpawnBotsAtBeginPlay = true;
     ServerPhaseTimeRemaining = 0.0f;
 }
 
@@ -22,8 +27,58 @@ void AFrontlineBRGameMode::BeginPlay()
 {
     Super::BeginPlay();
 
+    SpawnInitialBots();
+
     EnterPhase(EFrontlineMatchPhase::Warmup);
     GetWorldTimerManager().SetTimer(TickMatchTimerHandle, this, &AFrontlineBRGameMode::TickMatchPhase, 1.0f, true);
+}
+
+void AFrontlineBRGameMode::SpawnInitialBots()
+{
+    if (!bSpawnBotsAtBeginPlay || TargetBotCount <= 0 || !DefaultPawnClass)
+    {
+        return;
+    }
+
+    TArray<AActor*> PlayerStarts;
+    UGameplayStatics::GetAllActorsOfClass(this, APlayerStart::StaticClass(), PlayerStarts);
+
+    UNavigationSystemV1* NavSys = FNavigationSystem::GetCurrent<UNavigationSystemV1>(GetWorld());
+    int32 Spawned = 0;
+
+    for (int32 BotIdx = 0; BotIdx < TargetBotCount; ++BotIdx)
+    {
+        FVector BaseLocation = FVector::ZeroVector;
+        if (PlayerStarts.Num() > 0)
+        {
+            BaseLocation = PlayerStarts[BotIdx % PlayerStarts.Num()]->GetActorLocation();
+        }
+
+        FVector SpawnLocation = BaseLocation;
+        if (NavSys)
+        {
+            FNavLocation ReachableLocation;
+            if (NavSys->GetRandomReachablePointInRadius(BaseLocation, BotSpawnRadius, ReachableLocation))
+            {
+                SpawnLocation = ReachableLocation.Location;
+            }
+        }
+
+        SpawnLocation.Z += 50.0f;
+
+        FActorSpawnParameters SpawnParams;
+        SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+        APawn* BotPawn = GetWorld()->SpawnActor<APawn>(DefaultPawnClass, SpawnLocation, FRotator::ZeroRotator, SpawnParams);
+        if (!IsValid(BotPawn))
+        {
+            continue;
+        }
+
+        BotPawn->SpawnDefaultController();
+        ++Spawned;
+    }
+
+    UE_LOG(LogTemp, Log, TEXT("FrontlineBRGameMode: Spawned %d/%d bots"), Spawned, TargetBotCount);
 }
 
 void AFrontlineBRGameMode::EnterPhase(EFrontlineMatchPhase NewPhase)

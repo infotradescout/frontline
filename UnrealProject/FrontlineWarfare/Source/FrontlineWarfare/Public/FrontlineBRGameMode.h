@@ -24,9 +24,20 @@ public:
     UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Match")
     float RestartDelaySeconds;
 
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bots")
+    int32 TargetBotCount;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bots")
+    float BotSpawnRadius;
+
+    UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Bots")
+    bool bSpawnBotsAtBeginPlay;
+
 private:
     FTimerHandle TickMatchTimerHandle;
     float ServerPhaseTimeRemaining;
+
+    void SpawnInitialBots();
 
     void EnterPhase(EFrontlineMatchPhase NewPhase);
     void TickMatchPhase();
