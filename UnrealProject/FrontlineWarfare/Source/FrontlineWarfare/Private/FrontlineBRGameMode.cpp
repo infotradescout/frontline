@@ -9,11 +9,20 @@
 #include "GameFramework/PlayerStart.h"
 #include "Kismet/GameplayStatics.h"
 #include "NavigationSystem.h"
+#include "UObject/ConstructorHelpers.h"
 #include "TimerManager.h"
 
 AFrontlineBRGameMode::AFrontlineBRGameMode()
 {
     GameStateClass = AFrontlineBRGameState::StaticClass();
+
+    // Force the intended first-person pawn instead of falling back to DefaultPawn (sphere).
+    static ConstructorHelpers::FClassFinder<APawn> FPCharacterBP(
+        TEXT("/Game/FirstPerson/Blueprints/BP_FirstPersonCharacter"));
+    if (FPCharacterBP.Succeeded())
+    {
+        DefaultPawnClass = FPCharacterBP.Class;
+    }
 
     WarmupSeconds = 10.0f;
     LiveMatchSeconds = 240.0f;
