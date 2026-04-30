@@ -3,6 +3,8 @@
 #include "AIController.h"
 #include "Engine/Engine.h"
 #include "EngineUtils.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/Pawn.h"
 #include "GameFramework/PlayerController.h"
 #include "GameFramework/PlayerState.h"
@@ -38,6 +40,12 @@ AFrontlineBRGameMode::AFrontlineBRGameMode()
 void AFrontlineBRGameMode::BeginPlay()
 {
     Super::BeginPlay();
+
+    if (UGameplayStatics::IsGamePaused(this))
+    {
+        UGameplayStatics::SetGamePaused(this, false);
+        UE_LOG(LogTemp, Warning, TEXT("FrontlineBRGameMode: Cleared paused state on BeginPlay"));
+    }
 
     UWorld* World = GetWorld();
     const FString WorldPackageName = (World && World->GetOutermost())
@@ -80,14 +88,43 @@ void AFrontlineBRGameMode::PostLogin(APlayerController* NewPlayer)
         return;
     }
 
+    // Force game input focus in PIE to avoid sessions where camera and movement appear frozen.
+    NewPlayer->SetIgnoreMoveInput(false);
+    NewPlayer->SetIgnoreLookInput(false);
+    NewPlayer->bShowMouseCursor = false;
+    FInputModeGameOnly GameOnlyInputMode;
+    GameOnlyInputMode.SetConsumeCaptureMouseDown(false);
+    NewPlayer->SetInputMode(GameOnlyInputMode);
+
     APawn* Pawn = NewPlayer->GetPawn();
+    if (!Pawn)
+    {
+        RestartPlayer(NewPlayer);
+        Pawn = NewPlayer->GetPawn();
+    }
+
+    if (Pawn)
+    {
+        Pawn->EnableInput(NewPlayer);
+
+        if (ACharacter* Character = Cast<ACharacter>(Pawn))
+        {
+            if (UCharacterMovementComponent* MoveComp = Character->GetCharacterMovement())
+            {
+                MoveComp->SetMovementMode(MOVE_Walking);
+            }
+        }
+    }
+
     UE_LOG(
         LogTemp,
         Log,
-        TEXT("FrontlineBRGameMode: PostLogin Controller=%s Pawn=%s PawnClass=%s"),
+        TEXT("FrontlineBRGameMode: PostLogin Controller=%s Pawn=%s PawnClass=%s IgnoreMove=%d IgnoreLook=%d"),
         *GetNameSafe(NewPlayer),
         *GetNameSafe(Pawn),
-        Pawn ? *GetNameSafe(Pawn->GetClass()) : TEXT("None"));
+        Pawn ? *GetNameSafe(Pawn->GetClass()) : TEXT("None"),
+        NewPlayer->IsMoveInputIgnored() ? 1 : 0,
+        NewPlayer->IsLookInputIgnored() ? 1 : 0);
 
     if (!Pawn)
     {
